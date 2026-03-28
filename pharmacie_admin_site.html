@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pharmacie de Veyrier-du-Lac</title>
+
+<style>
+body {margin:0;font-family:Arial;background:#f6f1ea;color:#2f3e34;}
+header {padding:20px;background:white;display:flex;justify-content:space-between;}
+button {padding:10px;border:none;border-radius:8px;cursor:pointer;}
+.admin {position:fixed;top:10px;right:10px;}
+
+.container {padding:40px;max-width:1000px;margin:auto;}
+.card {background:white;padding:20px;border-radius:12px;margin-bottom:20px;}
+
+input, textarea {width:100%;padding:10px;margin-top:10px;margin-bottom:10px;}
+
+.hidden {display:none;}
+</style>
+</head>
+
+<body>
+
+<div class="admin">
+<button onclick="openLogin()">Admin</button>
+</div>
+
+<header>
+<h1>Pharmacie de Veyrier-du-Lac</h1>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Horaires</h2>
+<p id="horaires"></p>
+</div>
+
+<div class="card">
+<h2>Info</h2>
+<p id="info"></p>
+</div>
+
+<div class="card">
+<h2>Galerie</h2>
+<div id="gallery"></div>
+</div>
+
+</div>
+
+<!-- LOGIN -->
+<div id="loginBox" class="hidden card" style="position:fixed;top:20%;left:50%;transform:translateX(-50%);width:300px;">
+<h3>Connexion admin</h3>
+<input id="user" placeholder="Identifiant">
+<input id="pass" type="password" placeholder="Mot de passe">
+<button onclick="login()">Connexion</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden card" style="position:fixed;top:10%;left:50%;transform:translateX(-50%);width:400px;">
+<h3>Admin</h3>
+
+<label>Horaires</label>
+<textarea id="editHoraires"></textarea>
+
+<label>Info (fermeture exceptionnelle…)</label>
+<textarea id="editInfo"></textarea>
+
+<label>Images (1 URL par ligne)</label>
+<textarea id="editImages"></textarea>
+
+<button onclick="save()">Enregistrer</button>
+<button onclick="logout()">Quitter</button>
+</div>
+
+<script>
+
+function init(){
+if(!localStorage.horaires){
+localStorage.horaires="Lundi-Vendredi 8h30-19h30 | Samedi 9h-18h";
+}
+if(!localStorage.info){
+localStorage.info="Bienvenue dans votre pharmacie.";
+}
+if(!localStorage.images){
+localStorage.images="";
+}
+render();
+}
+
+function render(){
+document.getElementById("horaires").innerText=localStorage.horaires;
+document.getElementById("info").innerText=localStorage.info;
+
+let gallery="";
+localStorage.images.split("\n").forEach(url=>{
+if(url.trim()){
+gallery+=`<img src="${url}" style="width:100%;margin-top:10px;border-radius:10px;">`;
+}
+});
+document.getElementById("gallery").innerHTML=gallery;
+}
+
+function openLogin(){
+document.getElementById("loginBox").classList.remove("hidden");
+}
+
+function login(){
+let u=document.getElementById("user").value;
+let p=document.getElementById("pass").value;
+
+if(u==="admin" && p==="Pharmacie74290!"){
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("adminPanel").classList.remove("hidden");
+
+document.getElementById("editHoraires").value=localStorage.horaires;
+document.getElementById("editInfo").value=localStorage.info;
+document.getElementById("editImages").value=localStorage.images;
+
+}else{
+alert("Identifiants incorrects");
+}
+}
+
+function save(){
+localStorage.horaires=document.getElementById("editHoraires").value;
+localStorage.info=document.getElementById("editInfo").value;
+localStorage.images=document.getElementById("editImages").value;
+
+render();
+alert("Modifications enregistrées");
+}
+
+function logout(){
+document.getElementById("adminPanel").classList.add("hidden");
+}
+
+init();
+
+</script>
+
+</body>
+</html>
